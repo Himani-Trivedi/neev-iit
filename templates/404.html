@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Error{% endblock %}
+
+{% block header %}Neev{% endblock %}
+
+{% block content %}
+<h1>Oops! Looks like the page doesn't exist anymore</h1>
+
+<a href="{{ url_for('home') }}">
+    <p>Click Here
+</a>To go to the Home Page</p>
+{% endblock %}

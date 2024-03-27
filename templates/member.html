@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Page</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles1.css')}}"> <!-- You can link your CSS file here -->
+</head>
+<body>
+    <header>
+        <h1>NEEV</h1>
+    </header>
+    <nav>
+        <ul>
+           <li><a href="Add_member.html">Add Member</a></li>     
+            <li><a href="dashboard(admin).html">Back</a></li>
+        </ul>
+    </nav>
+    <main>
+        <div class="translucent-bg1"></div>
+        <table class="member-table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone no</th>
+                    <th>Gender</th>
+                    <th>Designation</th>
+                    <th>Photo</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Siya Shah</td>
+                    <td>siyashah@example.com</td>
+                    <td>9786545637</td>
+                    <td>Female</td>
+                    <td>Head of Social affairs</td>
+                    <td>siya.jpg</td>
+                    <td>767677</td>
+                </tr>
+                <!-- Add more rows for other members -->
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <p>&copy; 2024 NEEV</p>
+    </footer>
+</body>
+</html>

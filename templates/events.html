@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Neev - PAST EVENTS {% endblock %}
+
+{% block header %}Neev - Past Events{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="/">Home</a></li>
+</ul>
+{% endblock %}
+
+
+{% block content %}
+<!-- Main Content -->
+<div class="container1">
+    <div class="event">
+        <h2 class="event-title">Event</h2>
+        <p class="event-description" style="font-size: 13px;">
+            During January to March 2024, NEEV IITGN, in partnership with Desai Foundation
+            Trust, successfully organized nine projects and activities, including skill development courses, workshops,
+            and awareness sessions for 286 youth and women hailing from rural areas in Gandhinagar. A total of 37
+            participants completed the Stitching Skill Training Course, 24 participants completed the Beautician Skill
+            Training Course, 15 participants completed the Tally Skill Training Course, 12 participants completed the
+            Spoken English Training Course, 20 participants completed the Computer Hardware Training Course, and 25
+            participants completed the Training Of Trainers in Sewing, all of whom received certificates for their
+            achievements. These courses were offered entirely free of cost to the participants.
+
+            Additionally, NEEV conducted awareness sessions in Banking and Financial Literacy for 56 participants,
+            Menstrual Health Management for 55 participants, and Career Development Skills for 43 participants.</p>
+
+    </div>
+</div>
+
+
+<main>
+    <div class="translucent-bg1"></div>
+</main>
+
+<!-- Footer -->
+<div class="event-images">
+    <img src="{{url_for('static',filename='WhatsApp Image 2024-03-27 at 12.29.17 AM.jpeg')}}" alt=" Image 1">
+    <img src="{{url_for('static',filename='WhatsApp Image 2024-03-27 at 12.29.18 AM (1).jpeg') }}" alt=" Image 2">
+    <img src="{{url_for('static',filename='WhatsApp Image 2024-03-27 at 12.29.18 AM.jpeg') }}" alt=" Image 3">
+</div>
+{% endblock %}

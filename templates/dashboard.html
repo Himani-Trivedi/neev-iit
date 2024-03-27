@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Neev{% endblock %}
+
+{% block header %}Neev{% endblock %}
+
+{% block nav %}
+<ul>
+
+    <li class="dropdown">
+        <a href="#"> ☰ </a>
+        <div class="dropdown-content">
+            <a href="instructor.html">Instructor</a>
+            <a href="volunteer.html">Volunteer</a>
+            <a href="students.html">Students</a>
+            <a href="courses.html">Courses</a>
+            {% if session.member_type == 'admin' %}
+                <a href="member.html">Member</a>
+                <a href="donor.html">Donor</a>
+            {% endif %}
+        </div>
+
+        <li><a href="{{ url_for('events') }}">Events</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        <li class="dropdown">
+            <a href="#">Contact</a>
+            <div class="dropdown-content">
+                <a href="tel:99898989">Phone no-99898989</a>
+                <a href="mailto:neev@iitgn.ac.in">Email-neev@iitgn.ac.in</a>
+                <a href="https://www.instagram.com/neeviitgn/">Instagram-neev@iitgn</a>
+            </div>
+        </li>
+    </li>
+    <li><a href="/profile">My Profile</a></li>
+    <!-- <li><a href="dashboard(main).html">Home</a></li> -->
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="translucent-bg"></div>
+<section class="about">
+    <h2>About NEEV</h2>
+    <p>
+        NEEV is an IIT Gandhinagar community outreach program. It is actively working to bridge the knowledge
+        and communication gap by offering comprehensive training and mentoring, and growing the employability
+        and entrepreneurship mind set of the surrounding communities.
+    </p>
+    <p>
+        NEEV's mission is to empower grassroots communities through workforce development, with a focus on
+        entrepreneurship and skills training. NEEV’s focus beneficiaries include youth and women from rural
+        and urban localities from the areas surrounding IIT Gandhinagar.
+    </p>
+
+    <p>
+        {{session}}
+    </p>
+
+</section>
+{% endblock %}

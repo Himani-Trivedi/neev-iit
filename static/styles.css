@@ -1,0 +1,321 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9; /* Added background color (new) */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+   
+}
+
+
+
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+/*.image-container {
+    background-image: url('NEEV_background.png'); /* Specify the path to your image file 
+    background-size: cover; /* Cover the entire container with the background image
+    background-position: center; /* Center the background image
+    position: relative; /* Positioning context for absolutely positioned elements 
+    padding: 20px; /* Add padding to create space for the paragraph text */
+
+
+
+
+main {
+    padding: 20px;
+    position: relative; /* Added position relative(new) */
+}
+
+
+
+.about {
+    max-width: 800px;
+    text-align: left; /* Align text to the left */
+    color:black; /* Set the text color to BLACK */
+    position: relative;/* Ensure z-index works */
+    z-index: 1;  /*Ensure text is above the background image */
+}
+
+.about p {
+    margin-bottom: 20px; /* Add space between paragraphs */
+    
+}
+
+.about p:first-of-type {
+    margin-top: 20px; /* Add space between "About NEEV" and first paragraph */
+}
+
+nav {
+    text-align: right; /* Align navigation to the right */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    font-weight: bold; /* Set the font weight to bold */
+}
+
+nav ul li {
+    display: inline-block;
+    position: relative; /* Required for positioning dropdown */
+}
+
+nav ul li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 200px; /* Increase the width to accommodate the content */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 0; /* Align the dropdown content to the right edge */
+    text-align: left; /* Align the text to the left */
+    font-weight: normal; /* Reset font weight to normal */
+}
+
+
+.dropdown-content a {
+    color: black; /* Initial color */
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s ease; /* Add transition effect for color change */
+}
+
+.dropdown-content a:hover {
+    color: red; /* Change color on hover */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+button {
+    width: 100%; /* Make button width same as the input fields */
+    padding: 15px; /* Increase padding for a larger button */
+    background-color: #007bff; /* Background color for the button */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+
+.add-member-btn {
+    float: right;
+    margin-bottom: 20px;
+}
+
+.member-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.member-table th,
+.member-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.member-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.translucent-bg {
+    position: fixed ; /* Position the background image */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('NEEV_backgroundFF.png'); /* Specify the path to your image file */
+    background-size: cover; /* Cover the entire container with the background image */
+    background-position: center; /* Center the background image */
+    opacity: 0.5; /* Adjust the opacity as needed */
+    z-index: -1; /* Ensure the background is behind other content */
+}
+
+.translucent-bg1 {
+    position: fixed ; /* Position the background image */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('NEEV_Background(2).png'); /* Specify the path to your image file */
+    background-size: cover; /* Cover the entire container with the background image */
+    background-position: center; /* Center the background image */
+    opacity: 0.5; /* Adjust the opacity as needed */
+    z-index: -1; /* Ensure the background is behind other content */
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .login-container {
+    width: 400px; /* Set the width of the login container */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+.input-group {
+    margin-bottom: 20px;
+  }
+  
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .container1 {
+    width: 90%; /* Adjust as needed */
+    max-width: 800px; /* Adjust as needed */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Enable vertical scrolling */
+    min-height: 90vh; /* Set minimum height to 80% of viewport height */
+}
+
+/*h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}*/
+
+/*h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    overflow: hidden; /* Prevent overflow 
+    white-space: nowrap; /* Prevent wrapping
+    text-overflow: ellipsis; /* Display ellipsis if text overflows 
+}*/
+
+h2 {
+    text-align: center;
+    margin: 0; /* Remove default margins */
+    padding: 20px 0; /* Add padding to create space */
+    font-size: 2em; /* Increase font size */
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/*label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}*/
+
+
+label {
+    display: inline-block; /* Make labels behave like blocks */
+    width: 100px; /* Set a fixed width for labels */
+    margin-right: 12px; /* Add some right margin for spacing */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.form-group1 {
+    margin-bottom: 20px;
+    display: flex; /* Use flexbox */
+    align-items: center; /* Align items vertically */
+}
+
+input[type="file"],
+select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1; /* Let the inputs expand to fill remaining space */
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        Neev
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles1.css')}}">
+    <!-- You can link your CSS file here -->
+</head>
+
+<body>
+    <header>
+        <h1>
+            {% block header %}
+            Neev
+            {% endblock %} </h1>
+    </header>
+
+    <nav>
+        {% block nav %}
+        Neev
+        {% endblock %}
+    </nav>
+
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 NEEV </p>
+    </footer>
+</body>
+
+</html>
