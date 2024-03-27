@@ -32,7 +32,7 @@ def not_found(e):
 
 @app.route('/home')
 @app.route('/')
-def index():
+def home():
     return render_template('home.html')
 
 @app.route('/events')
@@ -78,7 +78,7 @@ def login_auth():
         session['password']=request.form['password']
         return render_template('dashboard.html',session=session)  #1=> member and 2=>admin
     else:
-        return redirect(url_for('/'))
+        return render_template('home.html')
 
 
 @app.route('/profile')
@@ -95,9 +95,53 @@ def display_profile():
 
     return render_template('profile.html',data=data,type=session['member_type'])
 
+@app.route('/courses')
+def courses():
+    con=mysql_app.connect()
+    cur=con.cursor()
+    cur.execute("select * from course")
+    data=cur.fetchall()
+
+    cur.execute("select C_ID from active_courses where NOW() between start_date and end_date")
+    active_courses=cur.fetchall()
+    cur.close()
+    con.close()
+    return render_template('courses.html',data=data,active=tuple(item for subtuple in active_courses for item in subtuple))
+
+@app.route('/course_details/<id>')
+def course_details(id):
+    return render_template('demo.html',cid=id)
+
+@app.route('/activate_course/<id>')
+def activate_course(id):
+    return render_template('demo.html',cid=id)
+
+@app.route('/add_course')
+def add_course():
+    return render_template('add_course.html')
+
+@app.route('/add_course_detail',methods=['POST','GET'])
+def add_course_detail():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        cur.execute("insert into course (C_ID,Course_name,Details,Venue) values (%s,%s,%s,%s)",(request.form['id'],request.form['name'],request.form['Details'],request.form['Venue'],))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('courses'))
+    else:
+        return redirect(url_for('home'))
+
+
 @app.route('/demo')
 def demo():
     return render_template('demo.html')
+
+
+
 
 
 @app.route('/add_student', methods=['POST'])
@@ -120,7 +164,7 @@ def add_student():
             con.connect()
             cur.close()
         
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)

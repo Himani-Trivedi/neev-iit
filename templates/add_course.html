@@ -1,0 +1,45 @@
+{% extends 'base_form.html' %}
+
+{% block title %}Neev Add new Course{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container1">
+        <h3>Add New Course</h3>
+        <form action="{{url_for('add_course_detail')}}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="id">ID:</label>
+                <input type="text" id="id" name="id" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="Details">Details:</label>
+                <input type="text" id="Details" name="Details" required>
+            </div>
+            <div class="form-group">
+                <label for="Venue">Venue:</label>
+                <input type="text" id="Venue" name="Venue" required>
+            </div>
+            <!-- <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" required>
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" required>
+            </div>
+            <div class="form-group">
+                <label for="Active">Active:</label>
+                <input type="text" id="Active" name="Active" required>
+            </div> -->
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <main>
+        <div class="translucent-bg1"></div>
+    </main>
+{% endblock %}

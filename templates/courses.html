@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Neev{% endblock %}
+
+{% block header %}Neev{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{{ url_for('add_course') }}">Add Course</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+    <div class="translucent-bg1"></div>
+    <table class="member-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Course_Name</th>
+                <th>Details</th>
+                <th>Venue</th>
+                <th>Status</th>
+                <th>Activate</th>
+                <th>Info</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data%}
+            <tr>
+                <td>{{item[0]}}</td>
+                <td>{{item[1]}}</td>
+                <td>{{item[2]}}</td>
+                <td>{{item[3]}}</td>
+                <td>
+                    {% if item[0] in active %}
+                        Active
+                    {%else%}
+                        -
+                    {% endif %}
+                </td>
+                <td><button type="button"><a href="{{ url_for('activate_course',id=item[0]) }}">+</a></button></td>
+                <td><a href="{{ url_for('course_details',id=item[0]) }}">Click Here</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

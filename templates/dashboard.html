@@ -6,14 +6,13 @@
 
 {% block nav %}
 <ul>
-
     <li class="dropdown">
         <a href="#"> ☰ </a>
         <div class="dropdown-content">
             <a href="instructor.html">Instructor</a>
             <a href="volunteer.html">Volunteer</a>
             <a href="students.html">Students</a>
-            <a href="courses.html">Courses</a>
+            <a href="{{ url_for('courses') }}">Courses</a>
             {% if session.member_type == 'admin' %}
                 <a href="member.html">Member</a>
                 <a href="donor.html">Donor</a>
@@ -52,7 +51,7 @@
     </p>
 
     <p>
-        {{session}}
+        <!-- {{session}} -->
     </p>
 
 </section>
