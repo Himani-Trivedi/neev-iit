@@ -15,6 +15,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    /* overflow-y: scroll;  */
    
 }
 
@@ -40,7 +41,9 @@ header {
 
 main {
     padding: 20px;
-    position: relative; /* Added position relative(new) */
+    position: relative; 
+    /* overflow-y: scroll;  */
+    /* Added position relative(new) */
 }
 
 

@@ -4,99 +4,14 @@
 
 {% block header %}Neev{% endblock %}
 
-{% block nav %}
-<ul>
-    <li><a href="{{ url_for('add_course') }}">Add Course</a></li>
-</ul>
-{% endblock %}
 
 {% block content %}
 <div class="translucent-bg1"></div>
-<table class="member-table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Course_Name</th>
-            <th>Details</th>
-            <th>Venue</th>
-            <th>Add</th>
-            <th>Activate</th>
-            <th>Info</th>
-
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in data%}
-        <tr>
-            <td>{{item[0]}}</td>
-            <td>{{item[1]}}</td>
-            <td>{{item[2]}}</td>
-            <td>{{item[3]}}</td>
-            <td>
-                {% if item[0] in active %}
-                <button onclick="showModal('studentModal','{{item[0]}}')">Student</button>
-                <button onclick="showModal('volunteerModal','{{item[0]}}')">Volunteer</button>
-                {%else%}
-                -
-                {% endif %}
-            </td>
-            <td>
-                <a href="{{ url_for('activate_course',id=item[0]) }}">
-                    <button>
-                        Activate Course
-                    </button>
-                </a>
-            </td>
-
-            <td><a href="{{ url_for('course_details',id=item[0]) }}">Details</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-
-
-<!-- Modal for selecting student -->
-<div class="modal" id="studentModal">
-    <div class="modal-content">
-        <span class="close" onclick="document.getElementById('studentModal').style.display='none'">&times;</span>
-        <h2>Select Student</h2>
-        <form method="POST" action="{{ url_for('en_stu')}} ">
-            <input name="course_id_hidden" id="hidden_course_student" type="hidden">
-            <select id="studentDropdown" name="student_enr">
-                {% for i in student%}
-                <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Add</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal for selecting volunteer -->
-<div class="modal" id="volunteerModal">
-    <div class="modal-content">
-        <span class="close" onclick="document.getElementById('volunteerModal').style.display='none'">&times;</span>
-        <h2>Select Volunteer</h2>
-        <form method="POST" action="{{ url_for('en_vol') }}">
-            <input name="course_id_hidden" id="hidden_course_volunteer" type="hidden">
-            <select id="volunteerDropdown" name="vol_en">
-                {% for i in volunteer %}
-                <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Add</button>
-    </div>
-</div>
-
-
-
 
 <div class="modal" id="viewModal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('viewModal')">&times;</span>
-
+        
         <input name="course_id_hidden" id="hidden_course_volunteer" type="hidden">
         <div>
             <h2>Course Details</h2>
@@ -198,22 +113,5 @@
         </ul>
     </div>
 </div>
-
-<script>
-    function showModal(modalId, cid) {
-        var modal = document.getElementById(modalId);
-        modal.style.display = "block";
-
-        document.getElementById('hidden_course_student').value = cid
-        document.getElementById('hidden_course_volunteer').value = cid
-
-    }
-
-    // Function to close modal
-    function closeModal(modalId) {
-        var modal = document.getElementById(modalId);
-        modal.style.display = "none";
-    }
-</script>
 
 {% endblock %}

@@ -1,7 +1,9 @@
+
 import re
-from flask import Flask, render_template, request, redirect, url_for,session,current_app
+from flask import Flask, render_template, request, redirect, url_for,session
 import config
 from flaskext.mysql import MySQL
+from datetime import date
 
 app = Flask(__name__)
 app.secret_key="himanipriyaomdhrudiya"
@@ -13,18 +15,13 @@ app.config['MYSQL_DATABASE_DB'] = config.MYSQL_DB
 app.config["MYSQL_DATABASE_PORT"] = 3306
 
 mysql_app = MySQL(app)
+session_Set=0
 
-
-#  con=mysql_app.connect()
-#     cur=con.cursor()
-#     cur.execute("select * from neev_members")
-#     data=cur.fetchall()
-
-
-@app.context_processor
-def inject_global():
-    return {'session_set': 0}
-
+def isSessionSet():
+    if session.get('set') == 1:
+        return True
+    else:
+        return False
 
 @app.errorhandler(404) 
 def not_found(e): 
@@ -33,7 +30,10 @@ def not_found(e):
 @app.route('/home')
 @app.route('/')
 def home():
-    return render_template('home.html')
+    if isSessionSet():
+        return redirect(url_for('dashboard'))
+    else:
+        return render_template('home.html')
 
 @app.route('/events')
 def events():
@@ -48,6 +48,7 @@ def logout():
     session.pop('member_type', None)
     session.pop('email', None)
     session.pop('password', None)
+    session.pop('set',0)
 
     return redirect(url_for('login'))
 
@@ -71,50 +72,146 @@ def login_auth():
             session['member_type']='admin'
         else:
             session['member_type']='member'
-            
-        # current_app.jinja_env.globals['session_set'] = 1
 
+        global session_Set 
+        session_Set=1
+        session['set']=1
         session['email']=request.form['email']
         session['password']=request.form['password']
         return render_template('dashboard.html',session=session)  #1=> member and 2=>admin
     else:
         return render_template('home.html')
 
+@app.route('/dashboard')
+def dashboard():
+    if isSessionSet():
+        return render_template('dashboard.html',session=session)
+    else :
+        return redirect(url_for('home'))
+
 
 @app.route('/profile')
 def display_profile():
-    con=mysql_app.connect()
-    cur=con.cursor()
-    if  session['member_type'] == 'admin':
-        cur.execute("select * from admin where Email=%s and Password=%s",(session['email'],session['password']))
-    else:
-        cur.execute("select * from neev_members where Email=%s and Password=%s",(session['email'],session['password']))
-    data=cur.fetchone()
-    cur.close()
-    con.close()
+    if isSessionSet():
+        con=mysql_app.connect()
+        cur=con.cursor()
+        if  session['member_type'] == 'admin':
+            cur.execute("select * from admin where Email=%s and Password=%s",(session['email'],session['password']))
+        else:
+            cur.execute("select * from neev_members where Email=%s and Password=%s",(session['email'],session['password']))
+        data=cur.fetchone()
+        cur.close()
+        con.close()
+    else :
+        return redirect(url_for('home'))
 
     return render_template('profile.html',data=data,type=session['member_type'])
 
 @app.route('/courses')
 def courses():
-    con=mysql_app.connect()
-    cur=con.cursor()
-    cur.execute("select * from course")
-    data=cur.fetchall()
+    if isSessionSet():   
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from course")
+        data=cur.fetchall()
 
-    cur.execute("select C_ID from active_courses where NOW() between start_date and end_date")
-    active_courses=cur.fetchall()
-    cur.close()
-    con.close()
-    return render_template('courses.html',data=data,active=tuple(item for subtuple in active_courses for item in subtuple))
+        cur.execute("select C_ID from active_courses where NOW() < start_date")
+        active_courses=cur.fetchall()
+
+
+        cur.execute("select * from students")
+        stu=cur.fetchall()
+
+        cur.execute("select * from volunteer")
+        vol=cur.fetchall()
+
+        cur.close()
+        con.close()
+        return render_template('courses.html',
+        data=data,active=tuple(item for subtuple in active_courses for item in subtuple),student=stu,volunteer=vol)
+    else:
+        return redirect(url_for('home'))
 
 @app.route('/course_details/<id>')
 def course_details(id):
-    return render_template('demo.html',cid=id)
+    if isSessionSet(): 
+        return render_template('course_details.html',cid=id)
+    else:
+        return redirect(url_for('home'))
 
 @app.route('/activate_course/<id>')
 def activate_course(id):
-    return render_template('demo.html',cid=id)
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from course where C_ID=%s",id)
+        data=cur.fetchall()
+
+        cur.execute("select * from instructors")
+        instructors=cur.fetchall()
+
+        cur.close()
+        con.close()
+        current_date = date.today().isoformat()
+
+        return render_template('activate_course.html',data=data[0],ins=instructors,date=current_date)
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/activate_course/done_activate',methods=['POST'])
+def done_activate():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        cur.execute("INSERT INTO active_courses (I_ID, C_ID, start_date, end_date) VALUES (%s,%s,%s,%s)",(request.form['instructor'],request.form['courseId'],request.form['startDate'],request.form['endDate'],))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('courses'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/en_stu',methods=['POST'])
+def en_stu():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        cur.execute("INSERT INTO student_course(S_ID, C_ID) VALUES (%s,%s)",
+        (request.form['student_enr'],request.form['course_id_hidden']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('courses_details'))
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/en_vol',methods=['POST'])
+def en_vol():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        cur.execute("INSERT INTO volunteer_course (V_ID, C_ID) VALUES (%s,%s)",
+        (request.form['vol_en'],request.form['course_id_hidden']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('courses_details'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/courses_details')
+def courses_details():
+    return render_template('demo.html')
+
 
 @app.route('/add_course')
 def add_course():
@@ -143,7 +240,7 @@ def demo():
 
 
 
-
+#just for demo
 @app.route('/add_student', methods=['POST'])
 def add_student():
     if request.method == 'POST':    
