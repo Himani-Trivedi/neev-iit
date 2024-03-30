@@ -115,29 +115,13 @@ def courses():
         cur.execute("select * from course")
         data=cur.fetchall()
 
-        cur.execute("select C_ID from active_courses where NOW() < start_date")
-        active_courses=cur.fetchall()
-
-
-        cur.execute("select * from students")
-        stu=cur.fetchall()
-
-        cur.execute("select * from volunteer")
-        vol=cur.fetchall()
-
         cur.close()
         con.close()
-        return render_template('courses.html',
-        data=data,active=tuple(item for subtuple in active_courses for item in subtuple),student=stu,volunteer=vol)
+        return render_template('courses.html',data=data)
     else:
         return redirect(url_for('home'))
 
-@app.route('/course_details/<id>')
-def course_details(id):
-    if isSessionSet(): 
-        return render_template('course_details.html',cid=id)
-    else:
-        return redirect(url_for('home'))
+# tuple(item for subtuple in active_courses for item in subtuple)
 
 @app.route('/activate_course/<id>')
 def activate_course(id):
@@ -175,13 +159,60 @@ def done_activate():
         return redirect(url_for('home'))
 
 
+@app.route('/course_details/<id>')
+def course_details(id):
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from course where C_ID=%s",(id))
+        course_data=cur.fetchall()
+
+        cur.execute("select name from active_courses natural join instructors where C_ID=%s",(id))
+        inst=cur.fetchall()  
+        inst=tuple(item for subtuple in inst for item in subtuple)
+
+        cur.execute("select * from active_courses where C_ID=%s",(id))
+        active_part=cur.fetchall()  
+
+        stu=[]
+        stu_len=[]
+        vol=[]
+        vol_len=[]
+        all_stu=[]
+        all_vol=[]
+        for i in active_part:
+            cur.execute("select s_id,name,email  from students where s_id in (select s_id from active_courses NATURAL join student_course where active_id=%s)",(i[4]))
+            rel=cur.fetchall()
+            stu.append(rel)
+            stu_len.append(len(rel))
+
+            cur.execute("select v_id,name  from volunteer where v_id in ( select v_id  from active_courses NATURAL join volunteer_course where active_id=%s)",(i[4]))
+            rel_vol=cur.fetchall()
+            vol.append(rel_vol)
+            vol_len.append(len(rel_vol))
+
+            cur.execute("select S_ID,name from students where S_ID NOT IN (select S_ID from active_courses NATURAL join student_course where active_id=%s)",(i[4]))
+            all_stu.append(cur.fetchall())
+
+            cur.execute("select v_id,name,email from volunteer where v_id not in ( select v_id  from active_courses NATURAL join volunteer_course where active_id=%s)",(i[4]))
+            all_vol.append(cur.fetchall())
+
+        cur.close()
+        con.close()
+
+        return render_template('course_details.html',course=course_data, instructors=inst, stud_not_in_course=all_stu,
+        vol_not_in_course=all_vol, active_course=active_part,students=stu,stu_count=stu_len,volunteers=vol,vol_count=vol_len)
+    else:
+        return redirect(url_for('home'))
+
+
 @app.route('/en_stu',methods=['POST'])
 def en_stu():
     if request.method == 'POST':
         con=mysql_app.connect()
         cur=con.cursor()
 
-        cur.execute("INSERT INTO student_course(S_ID, C_ID) VALUES (%s,%s)",
+        cur.execute("INSERT INTO student_course(S_ID, C_id) VALUES (%s,%s)",
         (request.form['student_enr'],request.form['course_id_hidden']))
         con.commit()
 
@@ -212,6 +243,8 @@ def en_vol():
 def courses_details():
     return render_template('demo.html')
 
+
+#for adding new course
 
 @app.route('/add_course')
 def add_course():

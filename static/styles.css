@@ -238,7 +238,7 @@ footer {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* Enable vertical scrolling */
+    /* overflow-y: auto; Enable vertical scrolling */
     min-height: 90vh; /* Set minimum height to 80% of viewport height */
 }
 

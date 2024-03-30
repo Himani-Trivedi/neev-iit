@@ -19,7 +19,7 @@
             <th>Course_Name</th>
             <th>Details</th>
             <th>Venue</th>
-            <th>Add</th>
+            <!-- <th>Add</th> -->
             <th>Activate</th>
             <th>Info</th>
 
@@ -33,16 +33,8 @@
             <td>{{item[2]}}</td>
             <td>{{item[3]}}</td>
             <td>
-                {% if item[0] in active %}
-                <button onclick="showModal('studentModal','{{item[0]}}')">Student</button>
-                <button onclick="showModal('volunteerModal','{{item[0]}}')">Volunteer</button>
-                {%else%}
-                -
-                {% endif %}
-            </td>
-            <td>
                 <a href="{{ url_for('activate_course',id=item[0]) }}">
-                    <button>
+                    <button class="btn btn-primary">
                         Activate Course
                     </button>
                 </a>

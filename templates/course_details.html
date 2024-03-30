@@ -2,116 +2,123 @@
 
 {% block title %}Neev{% endblock %}
 
-{% block header %}Neev{% endblock %}
+{% block nav %}{%endblock%}
+
+{% block header %}{{course[0][1]}}{%endblock%}
 
 
 {% block content %}
 <div class="translucent-bg1"></div>
 
-<div class="modal" id="viewModal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('viewModal')">&times;</span>
-        
-        <input name="course_id_hidden" id="hidden_course_volunteer" type="hidden">
+
+{% for j in range(0,active_course|length) %}
+<div class="card mx-4 my-4" style="width: 50rem;">
+    <div class="card-body">
+        <h6 class="card-title">
+            {{j+1}}
+        </h6>
+        <p class="card-text">
         <div>
-            <h2>Course Details</h2>
             <div>
-                <label for="startDate">Start Date:</label>
-                <input type="text" id="startDate" value="Start Date" readonly>
+                <label for="venue">From:</label>
+                <input type="text" id="venue" value="{{ active_course[j][2]}}" readonly>
             </div>
+
             <div>
-                <label for="endDate">End Date:</label>
-                <input type="text" id="endDate" value="End Date" readonly>
+                <label for="venue">To:</label>
+                <input type="text" id="venue" value="{{ active_course[j][3]}}" readonly>
             </div>
+
             <div>
                 <label for="instructor">Instructor:</label>
-                <input type="text" id="instructor" value="Instructor Name" readonly>
+                <input type="text" id="instructor" value="{{ instructors[j] }}" readonly>
             </div>
-            <div>
-                <label for="venue">Venue:</label>
-                <input type="text" id="venue" value="Venue" readonly>
-            </div>
-            <div>
-                <label for="basicDetails">Basic Details:</label>
-                <textarea id="basicDetails" rows="4" readonly>Basic Details</textarea>
-            </div>
+
+
             <div>
                 <label for="numStudents">Number of Students:</label>
-                <a href="#pastStudentsModal">5</a>
+                <a href="">{{stu_count[j]}}</a>
             </div>
+
+            <table class="member-table">
+                <thead>
+                    <tr>
+                        <th>Student Id</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in students[j] %}
+                    <tr>
+                        <td>{{item[0]}}</td>
+                        <td>{{item[1]}}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
             <div>
                 <label for="numVolunteers">Number of Volunteers:</label>
-                <a href="#pastVolunteersModal">8</a>
+                <a href="">{{vol_count[j]}}</a>
             </div>
+
+            <table class="member-table">
+                <thead>
+                    <tr>
+                        <th>Volunteer Id</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in volunteers[j] %}
+                    <tr>
+                        <td>{{item[0]}}</td>
+                        <td>{{item[1]}}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
         </div>
 
 
         <div>
-            <h2>Course Details</h2>
-            <div>
-                <label for="startDate">Start Date:</label>
-                <input type="text" id="startDate" value="Start Date" readonly>
-            </div>
-            <div>
-                <label for="endDate">End Date:</label>
-                <input type="text" id="endDate" value="End Date" readonly>
-            </div>
-            <div>
-                <label for="instructor">Instructor:</label>
-                <input type="text" id="instructor" value="Instructor Name" readonly>
-            </div>
-            <div>
-                <label for="venue">Venue:</label>
-                <input type="text" id="venue" value="Venue" readonly>
-            </div>
-            <div>
-                <label for="basicDetails">Basic Details:</label>
-                <textarea id="basicDetails" rows="4" readonly>Basic Details</textarea>
-            </div>
-            <div>
-                <label for="numStudents">Number of Students:</label>
-                <a href="#pastStudentsModal">5</a>
-            </div>
-            <div>
-                <label for="numVolunteers">Number of Volunteers:</label>
-                <a href="#pastVolunteersModal">8</a>
-            </div>
+            <label for="numVolunteers">Students List:</label>
+
+            <form method="POST" action="{{ url_for('en_stu')}} ">
+                <select id="studentDropdown" name="student_enr">
+                    {% for i in stud_not_in_course[j]%}
+                    <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
         </div>
 
-    </div>
-</div>
+        <div>
+            <label for="numVolunteers">Volunteer List:</label>
 
-<!-- Modal for viewing past students -->
-<div class="modal" id="pastStudentsModal">
-    <div class="modal-content">
-        <a href="#" class="close">&times;</a>
-        <h2>Past Students</h2>
-        <ul>
-            <li>Veena Patel</li>
-            <li>Student 2</li>
-            <li>Student 3</li>
-            <li>Student 4</li>
-            <li>Student 5</li>
-        </ul>
-    </div>
-</div>
+            <form method="POST" action="{{ url_for('en_stu')}} ">
+                <select id="studentDropdown" name="student_enr">
+                    {% for i in vol_not_in_course[j]%}
+                    <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
 
-<!-- Modal for viewing past volunteers -->
-<div class="modal" id="pastVolunteersModal">
-    <div class="modal-content">
-        <a href="#" class="close">&times;</a>
-        <h2>Past Volunteers</h2>
-        <ul>
-            <li>Ved Rathod</li>
-            <li>Volunteer 2</li>
-            <li>Volunteer 3</li>
-            <li>Volunteer 4</li>
-            <li>Volunteer 5</li>
-            <li>Volunteer 6</li>
-            <li>Volunteer 7</li>
-            <li>Volunteer 8</li>
-        </ul>
+
     </div>
+    </p>
+
+
 </div>
+{% endfor %}
+
 
 {% endblock %}
