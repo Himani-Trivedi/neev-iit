@@ -19,7 +19,7 @@
             <th>Course_Name</th>
             <th>Details</th>
             <th>Venue</th>
-            <!-- <th>Add</th> -->
+            <th></th>
             <th>Activate</th>
             <th>Info</th>
 
@@ -32,6 +32,14 @@
             <td>{{item[1]}}</td>
             <td>{{item[2]}}</td>
             <td>{{item[3]}}</td>
+            <td>
+                <a href="{{ url_for('update_link',id=item[0]) }}">
+                    <button class="btn btn-primary">
+                        Update
+                    </button>
+                </a>
+
+            </td>
             <td>
                 <a href="{{ url_for('activate_course',id=item[0]) }}">
                     <button class="btn btn-primary">
@@ -47,165 +55,5 @@
     </tbody>
 </table>
 
-
-
-<!-- Modal for selecting student -->
-<div class="modal" id="studentModal">
-    <div class="modal-content">
-        <span class="close" onclick="document.getElementById('studentModal').style.display='none'">&times;</span>
-        <h2>Select Student</h2>
-        <form method="POST" action="{{ url_for('en_stu')}} ">
-            <input name="course_id_hidden" id="hidden_course_student" type="hidden">
-            <select id="studentDropdown" name="student_enr">
-                {% for i in student%}
-                <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Add</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal for selecting volunteer -->
-<div class="modal" id="volunteerModal">
-    <div class="modal-content">
-        <span class="close" onclick="document.getElementById('volunteerModal').style.display='none'">&times;</span>
-        <h2>Select Volunteer</h2>
-        <form method="POST" action="{{ url_for('en_vol') }}">
-            <input name="course_id_hidden" id="hidden_course_volunteer" type="hidden">
-            <select id="volunteerDropdown" name="vol_en">
-                {% for i in volunteer %}
-                <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Add</button>
-    </div>
-</div>
-
-
-
-
-<div class="modal" id="viewModal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('viewModal')">&times;</span>
-
-        <input name="course_id_hidden" id="hidden_course_volunteer" type="hidden">
-        <div>
-            <h2>Course Details</h2>
-            <div>
-                <label for="startDate">Start Date:</label>
-                <input type="text" id="startDate" value="Start Date" readonly>
-            </div>
-            <div>
-                <label for="endDate">End Date:</label>
-                <input type="text" id="endDate" value="End Date" readonly>
-            </div>
-            <div>
-                <label for="instructor">Instructor:</label>
-                <input type="text" id="instructor" value="Instructor Name" readonly>
-            </div>
-            <div>
-                <label for="venue">Venue:</label>
-                <input type="text" id="venue" value="Venue" readonly>
-            </div>
-            <div>
-                <label for="basicDetails">Basic Details:</label>
-                <textarea id="basicDetails" rows="4" readonly>Basic Details</textarea>
-            </div>
-            <div>
-                <label for="numStudents">Number of Students:</label>
-                <a href="#pastStudentsModal">5</a>
-            </div>
-            <div>
-                <label for="numVolunteers">Number of Volunteers:</label>
-                <a href="#pastVolunteersModal">8</a>
-            </div>
-        </div>
-
-
-        <div>
-            <h2>Course Details</h2>
-            <div>
-                <label for="startDate">Start Date:</label>
-                <input type="text" id="startDate" value="Start Date" readonly>
-            </div>
-            <div>
-                <label for="endDate">End Date:</label>
-                <input type="text" id="endDate" value="End Date" readonly>
-            </div>
-            <div>
-                <label for="instructor">Instructor:</label>
-                <input type="text" id="instructor" value="Instructor Name" readonly>
-            </div>
-            <div>
-                <label for="venue">Venue:</label>
-                <input type="text" id="venue" value="Venue" readonly>
-            </div>
-            <div>
-                <label for="basicDetails">Basic Details:</label>
-                <textarea id="basicDetails" rows="4" readonly>Basic Details</textarea>
-            </div>
-            <div>
-                <label for="numStudents">Number of Students:</label>
-                <a href="#pastStudentsModal">5</a>
-            </div>
-            <div>
-                <label for="numVolunteers">Number of Volunteers:</label>
-                <a href="#pastVolunteersModal">8</a>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- Modal for viewing past students -->
-<div class="modal" id="pastStudentsModal">
-    <div class="modal-content">
-        <a href="#" class="close">&times;</a>
-        <h2>Past Students</h2>
-        <ul>
-            <li>Veena Patel</li>
-            <li>Student 2</li>
-            <li>Student 3</li>
-            <li>Student 4</li>
-            <li>Student 5</li>
-        </ul>
-    </div>
-</div>
-
-<!-- Modal for viewing past volunteers -->
-<div class="modal" id="pastVolunteersModal">
-    <div class="modal-content">
-        <a href="#" class="close">&times;</a>
-        <h2>Past Volunteers</h2>
-        <ul>
-            <li>Ved Rathod</li>
-            <li>Volunteer 2</li>
-            <li>Volunteer 3</li>
-            <li>Volunteer 4</li>
-            <li>Volunteer 5</li>
-            <li>Volunteer 6</li>
-            <li>Volunteer 7</li>
-            <li>Volunteer 8</li>
-        </ul>
-    </div>
-</div>
-
-<script>
-    function showModal(modalId, cid) {
-        var modal = document.getElementById(modalId);
-        modal.style.display = "block";
-
-        document.getElementById('hidden_course_student').value = cid
-        document.getElementById('hidden_course_volunteer').value = cid
-
-    }
-
-    // Function to close modal
-    function closeModal(modalId) {
-        var modal = document.getElementById(modalId);
-        modal.style.display = "none";
-    }
-</script>
 
 {% endblock %}

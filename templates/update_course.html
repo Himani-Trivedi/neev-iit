@@ -1,0 +1,46 @@
+{% extends 'base_form.html' %}
+
+{% block title %}Neev Update Course{% endblock %}
+
+{% block content %}
+
+{% set d=data[0]%}
+
+<body>
+    <div class="container1">
+        <h3>Update Course</h3>
+        <form action="{{url_for('update_course')}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="id" name="id" value="{{d[0]}}" required >
+
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="{{d[1]}}" required>
+            </div>
+            <div class="form-group">
+                <label for="Details">Details:</label>
+                <input type="text" id="Details" name="Details" value="{{d[2]}}" required>
+            </div>
+            <div class="form-group">
+                <label for="Venue">Venue:</label>
+                <input type="text" id="Venue" name="Venue" value="{{d[3]}}" required>
+            </div>
+            <!-- <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" required>
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" required>
+            </div>
+            <div class="form-group">
+                <label for="Active">Active:</label>
+                <input type="text" id="Active" name="Active" required>
+            </div> -->
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <main>
+        <div class="translucent-bg1"></div>
+    </main>
+{% endblock %}

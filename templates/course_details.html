@@ -82,32 +82,33 @@
                     {% endfor %}
                 </tbody>
             </table>
-
         </div>
-
 
         <div>
             <label for="numVolunteers">Students List:</label>
-
             <form method="POST" action="{{ url_for('en_stu')}} ">
                 <select id="studentDropdown" name="student_enr">
                     {% for i in stud_not_in_course[j]%}
                     <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
                     {% endfor %}
                 </select>
+                <input type="hidden" name="active_course_id" id="instructor" value="{{active_course[j][4]}}" readonly>
+                <input type="hidden" name="course_id" id="instructor" value="{{course[0][0]}}" readonly>
                 <button type="submit" class="btn btn-primary">Add</button>
             </form>
         </div>
 
         <div>
             <label for="numVolunteers">Volunteer List:</label>
-
-            <form method="POST" action="{{ url_for('en_stu')}} ">
-                <select id="studentDropdown" name="student_enr">
+            <form method="POST" action="{{ url_for('en_vol')}} ">
+                <select id="studentDropdown" name="vol_en">
                     {% for i in vol_not_in_course[j]%}
                     <option value="{{i[0]}}">{{i[1]}}, {{i[2]}}</option>
                     {% endfor %}
                 </select>
+                </select>
+                <input type="hidden" name="active_course_id" id="instructor" value="{{active_course[j][4]}}" readonly>
+                <input type="hidden" name="course_id" id="instructor" value="{{course[0][0]}}" readonly>
                 <button type="submit" class="btn btn-primary">Add</button>
             </form>
         </div>

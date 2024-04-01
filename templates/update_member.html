@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Member</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles.css')}}">
+</head>
+
+<body>
+    <div class="container1">
+        <h2>Update Member</h2>
+        <form action="{{ url_for('update_member')}}" method="post" enctype="multipart/form-data">
+            {% if error == 2 %}
+            <label for="name">Uploaded photo type is not supported</label>
+            {% set d='' %}
+            {% else %}
+            {% set d=data[0] %}
+            {% endif%}
+
+            <div class="form-group">
+                <label for="name">Adhar Id:</label>
+                <input type="text" id="name" name="adhar_id" required value="{{d[3]}}">
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required value="{{d[1]}}">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required value="{{d[2]}}">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone no :</label>
+                <input type="text" id="phone" name="phone" required value="{{d[8]}}">
+            </div>
+            <div class="form-group1">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    {% if d[4] == 'Male'%}
+                    <option value="male" selected>Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    {% elif d[4] == 'Female' %}
+                    <option value="female" selected>Female</option>
+                    <option value="male">Male</option>
+                    <option value="other">Other</option>
+                    {% else %}
+                    <option value="male" selected>Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    {% endif %}
+                </select>
+                {% if error != 2 %}
+                {% set new_path= path + "/" + d[6] %}
+                {% endif %}
+
+                <label for="photo">Photo:</label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+                {% if error != 2 %}
+                <a href="../{{path}}/{{d[6]}}">Uploaded</a>
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+                <label for="designation">Designation:</label>
+                <input type="text" id="designation" name="designation" required value="{{d[5]}}">
+            </div>
+
+            <input type="hidden" id="" name="m_id" required value="{{d[0]}}">
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <main>
+        <div class="translucent-bg1"></div>
+    </main>
+
+</body>
+
+</html>

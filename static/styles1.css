@@ -48,7 +48,7 @@ header {
 main {
     padding: 20px;
     /* overflow-y: scroll; */
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 

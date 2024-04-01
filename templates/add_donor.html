@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Donor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container1">
+        <h2>Add Donor</h2>
+        <form action="process_member.php" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="id">ID:</label>
+                <input type="text" id="id" name="id" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone no :</label>
+                <input type="text" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="Amount">Amount:</label>
+                <input type="text" id="Amount" name="Amount" required>
+            </div>
+            <div class="form-group">
+                <label for="Details">Details:</label>
+                <input type="text" id="Details" name="Details" required>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <main>
+        <div class="translucent-bg1"></div>
+    </main>
+
+</body>
+</html>

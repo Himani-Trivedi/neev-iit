@@ -1,9 +1,16 @@
 
+from distutils.log import error
+from fileinput import filename
+from importlib.resources import path
+import os
 import re
 from flask import Flask, render_template, request, redirect, url_for,session
 import config
 from flaskext.mysql import MySQL
 from datetime import date
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+from werkzeug.utils import secure_filename
+import random
 
 app = Flask(__name__)
 app.secret_key="himanipriyaomdhrudiya"
@@ -13,9 +20,19 @@ app.config['MYSQL_DATABASE_USER'] = config.MYSQL_USER
 app.config['MYSQL_DATABASE_PASSWORD'] = config.MYSQL_PASSWORD
 app.config['MYSQL_DATABASE_DB'] = config.MYSQL_DB
 app.config["MYSQL_DATABASE_PORT"] = 3306
+app.config['UPLOAD_FOLDER'] = 'static/images'
+app.config['UPLOADS_DEFAULT_DEST'] = 'static/images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
 
 mysql_app = MySQL(app)
 session_Set=0
+
+images = UploadSet('images', IMAGES)
+configure_uploads(app, images)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def isSessionSet():
     if session.get('set') == 1:
@@ -78,7 +95,7 @@ def login_auth():
         session['set']=1
         session['email']=request.form['email']
         session['password']=request.form['password']
-        return render_template('dashboard.html',session=session)  #1=> member and 2=>admin
+        return redirect(url_for('dashboard',session=session))  #1=> member and 2=>admin
     else:
         return render_template('home.html')
 
@@ -106,6 +123,675 @@ def display_profile():
         return redirect(url_for('home'))
 
     return render_template('profile.html',data=data,type=session['member_type'])
+
+
+@app.route('/volunteers')
+def volunteers():
+    if isSessionSet():   
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from volunteer")
+        data=cur.fetchall()
+
+        cur.close()
+        con.close()
+        return render_template('volunteer.html',data=data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/update_volunteer_link/<s_id>')
+def update_volunteer_link(s_id):
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from volunteer where s_id=%s",(s_id))
+        member_data=cur.fetchall()
+        cur.close()
+        con.close()
+        return render_template('update_volunteer.html',data=member_data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+#modification
+@app.route('/update_volunteer',methods=['POST','GET'])
+def update_volunteer():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        sql="UPDATE neev_members SET Name=%s, \
+        Email=%s,Identification_ID=%s,Gender=%s,\
+        Designation=%s,Photo=%s,Phone_No=%s WHERE M_id=%s"
+
+
+        if request.files['photo'].filename == '':
+            sql_2="UPDATE neev_members SET Name=%s, \
+            Email=%s,Identification_ID=%s,Gender=%s,\
+            Designation=%s,Phone_No=%s WHERE M_id=%s"
+
+            cur.execute(sql_2,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("nothing")
+        else:
+            file = request.files['photo']
+            filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+            file.filename.rsplit('.', 1)[1].lower()
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+            if file and allowed_file(file.filename):
+                    file.save(filepath)
+            else:
+                return render_template('update_member.html',error=2,path=app.config['UPLOAD_FOLDER'])
+
+            cur.execute(sql,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],filename,request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("else")
+
+        cur.close()
+        con.close()
+        return redirect(url_for('volunteer'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/delete_volunteer/<s_id>')
+def delete_volunteer(s_id):
+    if isSessionSet():   
+        sql="DELETE FROM volunteer WHERE v_id=%s"
+        
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute(sql,s_id)
+        con.commit()
+
+        cur.close()
+        con.close()
+
+        return redirect(url_for('volunteer'))
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/add_volunteer_link')
+def add_volunteer_link():
+    if isSessionSet():   
+        return render_template('add_volunteer.html')
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/insert_volunteer',methods=['POST','GET'])
+def insert_volunteer():
+    if request.method == 'POST':   
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        file = request.files['photo']
+        filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+        file.filename.rsplit('.', 1)[1].lower()
+        filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+        if file and allowed_file(file.filename):
+            file.save(filepath)
+        else:
+            return render_template('add_member.html',error=2)
+
+        cur.execute("SELECT * FROM neev_members WHERE Email=%s",(request.form['email']))
+        email_data=cur.fetchone()
+
+        if len(email_data) > 0:
+            return render_template('add_member.html',error=3)
+
+        cur.execute("INSERT INTO neev_members(Name, Email, Identification_ID, Gender,\
+             Designation, Photo, Password, Phone_No) VALUES \
+             (%s,%s,%s,%s,%s,%s,%s,%s)",
+             (request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],
+             request.form['designation'],filename,request.form['password'],request.form['phone']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('students'))
+    else:
+        return redirect(url_for('home'))
+
+
+
+
+
+@app.route('/students')
+def students():
+    if isSessionSet():   
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from students")
+        data=cur.fetchall()
+
+        cur.close()
+        con.close()
+        return render_template('students.html',data=data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/update_student_link/<s_id>')
+def update_student_link(s_id):
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from students where s_id=%s",(s_id))
+        member_data=cur.fetchall()
+        cur.close()
+        con.close()
+        return render_template('update_student.html',data=member_data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+#modification
+@app.route('/update_student',methods=['POST','GET'])
+def update_student():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        sql="UPDATE neev_members SET Name=%s, \
+        Email=%s,Identification_ID=%s,Gender=%s,\
+        Designation=%s,Photo=%s,Phone_No=%s WHERE M_id=%s"
+
+
+        if request.files['photo'].filename == '':
+            sql_2="UPDATE neev_members SET Name=%s, \
+            Email=%s,Identification_ID=%s,Gender=%s,\
+            Designation=%s,Phone_No=%s WHERE M_id=%s"
+
+            cur.execute(sql_2,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("nothing")
+        else:
+            file = request.files['photo']
+            filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+            file.filename.rsplit('.', 1)[1].lower()
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+            if file and allowed_file(file.filename):
+                    file.save(filepath)
+            else:
+                return render_template('update_member.html',error=2,path=app.config['UPLOAD_FOLDER'])
+
+            cur.execute(sql,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],filename,request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("else")
+
+        cur.close()
+        con.close()
+        return redirect(url_for('members'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/delete_student/<s_id>')
+def delete_student(s_id):
+    if isSessionSet():   
+        sql="DELETE FROM students WHERE s_id=%s"
+        
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute(sql,s_id)
+        con.commit()
+
+        cur.close()
+        con.close()
+
+        return redirect(url_for('students'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/add_student_link')
+def add_student_link():
+    if isSessionSet():   
+        return render_template('add_student.html')
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/insert_student',methods=['POST','GET'])
+def insert_student():
+    if request.method == 'POST':   
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        file = request.files['photo']
+        filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+        file.filename.rsplit('.', 1)[1].lower()
+        filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+        if file and allowed_file(file.filename):
+            file.save(filepath)
+        else:
+            return render_template('add_member.html',error=2)
+
+        cur.execute("SELECT * FROM neev_members WHERE Email=%s",(request.form['email']))
+        email_data=cur.fetchone()
+
+        if len(email_data) > 0:
+            return render_template('add_member.html',error=3)
+
+        cur.execute("INSERT INTO neev_members(Name, Email, Identification_ID, Gender,\
+             Designation, Photo, Password, Phone_No) VALUES \
+             (%s,%s,%s,%s,%s,%s,%s,%s)",
+             (request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],
+             request.form['designation'],filename,request.form['password'],request.form['phone']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('students'))
+    else:
+        return redirect(url_for('home'))
+
+
+
+
+@app.route('/instructors')
+def instructors():
+    if isSessionSet():   
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from instructors")
+        data=cur.fetchall()
+
+        cur.close()
+        con.close()
+        return render_template('instructor.html',data=data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+
+
+@app.route('/update_instructor_link/<s_id>')
+def update_instructor_link(s_id):
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from instructors where s_id=%s",(s_id))
+        member_data=cur.fetchall()
+        cur.close()
+        con.close()
+        return render_template('update_instructor.html',data=member_data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+#modification
+@app.route('/update_instructor',methods=['POST','GET'])
+def update_instructor():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        sql="UPDATE neev_members SET Name=%s, \
+        Email=%s,Identification_ID=%s,Gender=%s,\
+        Designation=%s,Photo=%s,Phone_No=%s WHERE M_id=%s"
+
+
+        if request.files['photo'].filename == '':
+            sql_2="UPDATE neev_members SET Name=%s, \
+            Email=%s,Identification_ID=%s,Gender=%s,\
+            Designation=%s,Phone_No=%s WHERE M_id=%s"
+
+            cur.execute(sql_2,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("nothing")
+        else:
+            file = request.files['photo']
+            filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+            file.filename.rsplit('.', 1)[1].lower()
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+            if file and allowed_file(file.filename):
+                    file.save(filepath)
+            else:
+                return render_template('update_member.html',error=2,path=app.config['UPLOAD_FOLDER'])
+
+            cur.execute(sql,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],filename,request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("else")
+
+        cur.close()
+        con.close()
+        return redirect(url_for('instructor'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/delete_instructor/<s_id>')
+def delete_instructor(s_id):
+    if isSessionSet():   
+        sql="DELETE FROM instructors WHERE v_id=%s"
+        
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute(sql,s_id)
+        con.commit()
+
+        cur.close()
+        con.close()
+
+        return redirect(url_for('instructor'))
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/add_instructor_link')
+def add_instructor_link():
+    if isSessionSet():   
+        return render_template('add_instructor.html')
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/insert_instructor',methods=['POST','GET'])
+def insert_instructor():
+    if request.method == 'POST':   
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        file = request.files['photo']
+        filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+        file.filename.rsplit('.', 1)[1].lower()
+        filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+        if file and allowed_file(file.filename):
+            file.save(filepath)
+        else:
+            return render_template('add_member.html',error=2)
+
+        cur.execute("SELECT * FROM neev_members WHERE Email=%s",(request.form['email']))
+        email_data=cur.fetchone()
+
+        if len(email_data) > 0:
+            return render_template('add_member.html',error=3)
+
+        cur.execute("INSERT INTO neev_members(Name, Email, Identification_ID, Gender,\
+             Designation, Photo, Password, Phone_No) VALUES \
+             (%s,%s,%s,%s,%s,%s,%s,%s)",
+             (request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],
+             request.form['designation'],filename,request.form['password'],request.form['phone']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('students'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/donors')
+def donors():
+    if isSessionSet():   
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from donation")
+        data=cur.fetchall()
+
+        cur.close()
+        con.close()
+        return render_template('donor.html',data=data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/update_donor_link/<m_id>')
+def update_donor_link(m_id):
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from neev_donors where M_id=%s",(m_id))
+        donor_data=cur.fetchall()
+        cur.close()
+        con.close()
+        return render_template('update_donor.html',data=donor_data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/update_donor',methods=['POST','GET'])
+def update_donor():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        sql="UPDATE neev_donors SET Name=%s, \
+        Email=%s,Identification_ID=%s,Gender=%s,\
+        Designation=%s,Photo=%s,Phone_No=%s WHERE M_id=%s"
+
+
+        if request.files['photo'].filename == '':
+            sql_2="UPDATE neev_donors SET Name=%s, \
+            Email=%s,Identification_ID=%s,Gender=%s,\
+            Designation=%s,Phone_No=%s WHERE M_id=%s"
+
+            cur.execute(sql_2,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("nothing")
+        else:
+            file = request.files['photo']
+            filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+            file.filename.rsplit('.', 1)[1].lower()
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+            if file and allowed_file(file.filename):
+                    file.save(filepath)
+            else:
+                return render_template('update_donor.html',error=2,path=app.config['UPLOAD_FOLDER'])
+
+            cur.execute(sql,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],filename,request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("else")
+
+        cur.close()
+        con.close()
+        return redirect(url_for('donors'))
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/delete_donor/<m_id>')
+def delete_donor(m_id):
+    if isSessionSet():   
+        sql="DELETE FROM donations WHERE d_id=%s"
+        
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute(sql,m_id)
+        con.commit()
+
+        cur.close()
+        con.close()
+
+        return redirect(url_for('donors'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/add_donor')
+def add_donor():
+    if isSessionSet():   
+        return render_template('add_donor.html')
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/insert_donor',methods=['POST','GET'])
+def insert_donor():
+    if request.method == 'POST':   
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        file = request.files['photo']
+        filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+        file.filename.rsplit('.', 1)[1].lower()
+        filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+        if file and allowed_file(file.filename):
+            file.save(filepath)
+        else:
+            return render_template('add_donor.html',error=2)
+
+        cur.execute("SELECT * FROM neev_donors WHERE Email=%s",(request.form['email']))
+        email_data=cur.fetchone()
+
+        if len(email_data) > 0:
+            return render_template('add_donor.html',error=3)
+
+        cur.execute("INSERT INTO neev_donors(Name, Email, Identification_ID, Gender,\
+             Designation, Photo, Password, Phone_No) VALUES \
+             (%s,%s,%s,%s,%s,%s,%s,%s)",
+             (request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],
+             request.form['designation'],filename,request.form['password'],request.form['phone']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('donors'))
+    else:
+        return redirect(url_for('home'))
+
+
+
+
+
+
+
+
+
+@app.route('/members')
+def members():
+    if isSessionSet():   
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from neev_members")
+        data=cur.fetchall()
+
+        cur.close()
+        con.close()
+        return render_template('member.html',data=data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/update_member_link/<m_id>')
+def update_member_link(m_id):
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from neev_members where M_id=%s",(m_id))
+        member_data=cur.fetchall()
+        cur.close()
+        con.close()
+        return render_template('update_member.html',data=member_data,path=app.config['UPLOAD_FOLDER'])
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/update_member',methods=['POST','GET'])
+def update_member():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        sql="UPDATE neev_members SET Name=%s, \
+        Email=%s,Identification_ID=%s,Gender=%s,\
+        Designation=%s,Photo=%s,Phone_No=%s WHERE M_id=%s"
+
+
+        if request.files['photo'].filename == '':
+            sql_2="UPDATE neev_members SET Name=%s, \
+            Email=%s,Identification_ID=%s,Gender=%s,\
+            Designation=%s,Phone_No=%s WHERE M_id=%s"
+
+            cur.execute(sql_2,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("nothing")
+        else:
+            file = request.files['photo']
+            filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+            file.filename.rsplit('.', 1)[1].lower()
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+            if file and allowed_file(file.filename):
+                    file.save(filepath)
+            else:
+                return render_template('update_member.html',error=2,path=app.config['UPLOAD_FOLDER'])
+
+            cur.execute(sql,(request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],request.form['designation'],filename,request.form['phone'],request.form['m_id']))
+            con.commit()
+            app.logger.info("else")
+
+        cur.close()
+        con.close()
+        return redirect(url_for('members'))
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/delete_member/<m_id>')
+def delete_member(m_id):
+    if isSessionSet():   
+        sql="DELETE FROM neev_members WHERE M_id=%s"
+        
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute(sql,m_id)
+        con.commit()
+
+        cur.close()
+        con.close()
+
+        return redirect(url_for('members'))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/add_member')
+def add_member():
+    if isSessionSet():   
+        return render_template('add_member.html')
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/insert_member',methods=['POST','GET'])
+def insert_member():
+    if request.method == 'POST':   
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        file = request.files['photo']
+        filename= file.filename.rsplit('.', 1)[0].lower() + str(int(random.random() * 4500)) + '.' + \
+        file.filename.rsplit('.', 1)[1].lower()
+        filepath=os.path.join(app.config['UPLOAD_FOLDER'],filename)
+
+        if file and allowed_file(file.filename):
+            file.save(filepath)
+        else:
+            return render_template('add_member.html',error=2)
+
+        cur.execute("SELECT * FROM neev_members WHERE Email=%s",(request.form['email']))
+        email_data=cur.fetchone()
+
+        if len(email_data) > 0:
+            return render_template('add_member.html',error=3)
+
+        cur.execute("INSERT INTO neev_members(Name, Email, Identification_ID, Gender,\
+             Designation, Photo, Password, Phone_No) VALUES \
+             (%s,%s,%s,%s,%s,%s,%s,%s)",
+             (request.form['name'],request.form['email'],request.form['adhar_id'],request.form['gender'],
+             request.form['designation'],filename,request.form['password'],request.form['phone']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('members'))
+    else:
+        return redirect(url_for('home'))
+
+
+
 
 @app.route('/courses')
 def courses():
@@ -157,6 +843,37 @@ def done_activate():
         return redirect(url_for('courses'))
     else:
         return redirect(url_for('home'))
+
+
+@app.route('/update/<id>')
+def update_link(id):
+    if isSessionSet(): 
+        con=mysql_app.connect()
+        cur=con.cursor()
+        cur.execute("select * from course where C_ID=%s",(id))
+        course_data=cur.fetchall()
+        cur.close()
+        con.close()
+        return render_template('update_course.html',data=course_data)
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/update_course',methods=['POST'])
+def update_course():
+    if request.method == 'POST':
+        con=mysql_app.connect()
+        cur=con.cursor()
+
+        cur.execute("UPDATE  course SET Course_name =%s, Details =%s, Venue =%s WHERE C_ID=%s",
+        (request.form['name'],request.form['Details'],request.form['Venue'],request.form['id']))
+        con.commit()
+
+        cur.close()
+        con.close()
+        return redirect(url_for('courses'))
+    else:
+        return redirect(url_for('home'))
+
 
 
 @app.route('/course_details/<id>')
@@ -212,13 +929,13 @@ def en_stu():
         con=mysql_app.connect()
         cur=con.cursor()
 
-        cur.execute("INSERT INTO student_course(S_ID, C_id) VALUES (%s,%s)",
-        (request.form['student_enr'],request.form['course_id_hidden']))
+        cur.execute("INSERT INTO student_course (S_ID, active_id) VALUES (%s,%s)",
+        (request.form['student_enr'],request.form['active_course_id']))
         con.commit()
 
         cur.close()
         con.close()
-        return redirect(url_for('courses_details'))
+        return redirect(url_for('course_details',id=request.form['course_id']))
     else:
         return redirect(url_for('home'))
 
@@ -228,21 +945,15 @@ def en_vol():
         con=mysql_app.connect()
         cur=con.cursor()
 
-        cur.execute("INSERT INTO volunteer_course (V_ID, C_ID) VALUES (%s,%s)",
-        (request.form['vol_en'],request.form['course_id_hidden']))
+        cur.execute("INSERT INTO volunteer_course (V_ID, active_id) VALUES (%s,%s)",
+        (request.form['vol_en'],request.form['active_course_id']))
         con.commit()
 
         cur.close()
         con.close()
-        return redirect(url_for('courses_details'))
+        return redirect(url_for('course_details',id=request.form['course_id']))
     else:
         return redirect(url_for('home'))
-
-
-@app.route('/courses_details')
-def courses_details():
-    return render_template('demo.html')
-
 
 #for adding new course
 
@@ -269,7 +980,6 @@ def add_course_detail():
 @app.route('/demo')
 def demo():
     return render_template('demo.html')
-
 
 
 

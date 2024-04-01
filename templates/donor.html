@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Page</title>
-    <link rel="stylesheet" href="{{ url_for('static',filename='styles1.css')}}"> <!-- You can link your CSS file here -->
+    <title>Donor Page</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles1.css')}}">
 </head>
 <body>
     <header>
@@ -12,47 +12,38 @@
     </header>
     <nav>
         <ul>
-           <li><a href="{{ url_for('add_member')}}">Add Member</a></li>     
+            <li><a href="{{ url_for('add_donor')}}" >Add Donor</a></li>     
             <li><a href="{{ url_for('dashboard')}}">Back</a></li>
         </ul>
     </nav>
     <main>
-
         <div class="translucent-bg1"></div>
         <table class="member-table">
             <thead>
                 <tr>
-                    <th>Adhar Id</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Phone no</th>
-                    <th>Gender</th>
-                    <th>Designation</th>
-                    <th>Photo</th>
-                    <th></th>
+                    <th>Phone</th>
+                    <th>Amount</th>
+                    <th>Details</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in data %}
                 <tr>
-                    <td>{{item[3]}}</td>
                     <td>{{item[1]}}</td>
-                    <td>{{item[2]}}</td>
-                    <td>{{item[8]}}</td>
-                    <td>{{item[4]}}</td>
                     <td>{{item[5]}}</td>
+                    <td>{{item[4]}}</td>
+                    <td>{{item[2]}}</td>
+                    <td>{{item[3]}}</td>
                     <td>
-                        <a href="{{path}}/{{item[6]}}">Link</a>
-                    </td>
-                    <td>
-                        <a href="{{url_for('update_member_link', m_id=item[0])}}">Update</a>
-                    </td>
-                    <td>
-                        <a href="{{url_for('delete_member', m_id=item[0])}}">Delete</a>
+                        <a href="{{url_for('update_donor_link', m_id=item[0])}}">Update</a>
                     </td>
                 </tr>
                 {% endfor %}
+              
+            </tbody>
             </tbody>
         </table>
     </main>

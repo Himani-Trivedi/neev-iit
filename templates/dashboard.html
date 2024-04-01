@@ -9,13 +9,13 @@
     <li class="dropdown">
         <a href="#"> ☰ </a>
         <div class="dropdown-content">
-            <a href="instructor.html">Instructor</a>
-            <a href="volunteer.html">Volunteer</a>
-            <a href="students.html">Students</a>
+            <a href="{{ url_for('instructors') }}">Instructor</a>
+            <a href="{{ url_for('volunteers') }}">Volunteer</a>
+            <a href="{{ url_for('students') }}">Students</a>
             <a href="{{ url_for('courses') }}">Courses</a>
             {% if session.member_type == 'admin' %}
-                <a href="member.html">Member</a>
-                <a href="donor.html">Donor</a>
+                <a href="{{ url_for('members') }}">Member</a>
+                <a href="{{ url_for('donors') }}">Donor</a>
             {% endif %}
         </div>
 

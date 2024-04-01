@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Page</title>
-    <link rel="stylesheet" href="{{ url_for('static',filename='styles1.css')}}"> <!-- You can link your CSS file here -->
+    <title>Instructor Page</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles1.css')}}">
 </head>
 <body>
     <header>
@@ -12,23 +12,22 @@
     </header>
     <nav>
         <ul>
-           <li><a href="{{ url_for('add_member')}}">Add Member</a></li>     
-            <li><a href="{{ url_for('dashboard')}}">Back</a></li>
+            <li><a href="{{ url_for('add_instructor_link')}}" >Add Instructor</a></li>    
+            <li><a href="{{ url_for('dashboard')}}" >Back</a></li>
         </ul>
     </nav>
     <main>
-
         <div class="translucent-bg1"></div>
         <table class="member-table">
             <thead>
                 <tr>
-                    <th>Adhar Id</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Phone no</th>
+                    <th>Phone</th>
                     <th>Gender</th>
-                    <th>Designation</th>
-                    <th>Photo</th>
+                    <th>Type</th>
+                    <th>Identification_id</th>
+                    <th>Student/Volunteer</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -36,20 +35,26 @@
             <tbody>
                 {% for item in data %}
                 <tr>
-                    <td>{{item[3]}}</td>
                     <td>{{item[1]}}</td>
                     <td>{{item[2]}}</td>
-                    <td>{{item[8]}}</td>
+                    <td>{{item[3]}}</td>
                     <td>{{item[4]}}</td>
+                    <td>{{item[6]}}</td>
                     <td>{{item[5]}}</td>
                     <td>
-                        <a href="{{path}}/{{item[6]}}">Link</a>
+                        {% if item[7] == 0 and item[8] == 0%}
+                        -
+                        {% elif item[7] != 0 %}
+                            Student
+                        {%  else %}                            
+                            Member
+                        {% endif%}
                     </td>
                     <td>
-                        <a href="{{url_for('update_member_link', m_id=item[0])}}">Update</a>
+                        <a href="{{url_for('update_instructor_link', s_id=item[0])}}">Update</a>
                     </td>
                     <td>
-                        <a href="{{url_for('delete_member', m_id=item[0])}}">Delete</a>
+                        <a href="{{url_for('delete_instructor', s_id=item[0])}}">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
