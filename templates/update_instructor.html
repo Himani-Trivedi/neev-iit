@@ -10,8 +10,8 @@
 
 <body>
     <div class="container1">
-        <h2>Update Volunteer</h2>
-        <form action="{{ url_for('update_volunteer')}}" method="post" enctype="multipart/form-data">
+        <h2>Update Instructor</h2>
+        <form action="{{ url_for('update_instructor')}}" method="post" enctype="multipart/form-data">
             {% if error == 2 %}
             <label for="name">Uploaded photo type is not supported</label>
             {% set d='' %}
@@ -21,7 +21,7 @@
 
             <div class="form-group">
                 <label for="name">Adhar Id:</label>
-                <input type="text" id="name" name="adhar_id" required value="{{d[3]}}">
+                <input type="text" id="name" name="adhar_id" required value="{{d[5]}}">
             </div>
             <div class="form-group">
                 <label for="name">Name:</label>
@@ -33,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label for="phone">Phone no :</label>
-                <input type="text" id="phone" maxlength="10" minlength="10" name="phone" required value="{{d[6]}}">
+                <input type="text" id="phone" maxlength="10" minlength="10" name="phone" required value="{{d[3]}}">
             </div>
             <div class="form-group1">
                 <label for="gender">Gender:</label>
@@ -52,24 +52,23 @@
                     <option value="other" selected>Other</option>
                     {% endif %}
                 </select>
-                {% if error != 2 %}
-                {% set new_path= path + "/" + d[5] %}
-                {% endif %}
 
-                <label for="photo">Photo:</label>
-                <input type="file" id="photo" name="photo" accept="image/*">
-                {% if error != 2 %}
-                <a href="../{{path}}/{{d[5]}}">Uploaded</a>
-                {% endif %}
+                <div class="form-group">
+                    <label for="Type">Type:</label>
+                    <select id="Type" name="Type" required>
+                        {% if d[4] == 'Full'%}
+                        <option value="Full" selected>Full</option>
+                        <option value="Part">Part time</option>
+                        {% else %}
+                        <option value="Full" >Full</option>
+                        <option value="Part" selected>Part time</option>
+                        {% endif %}
+                    </select>
+                </div>
 
             </div>
 
-            <div class="form-group">
-                <label for="designation">Address:</label>
-                <input type="text" id="designation" name="designation" required value="{{d[8]}}">
-            </div>
-
-            <input type="hidden" id="" name="v_id" required value="{{d[0]}}">
+            <input type="hidden" id="" name="i_id" required value="{{d[0]}}">
 
             <button type="submit">Submit</button>
         </form>

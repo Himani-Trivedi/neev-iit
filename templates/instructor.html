@@ -12,7 +12,7 @@
     </header>
     <nav>
         <ul>
-            <li><a href="{{ url_for('add_instructor_link')}}" >Add Instructor</a></li>    
+            <li><a href="{{ url_for('add_instructor_link')}}" >Add Instructor</a></li>  
             <li><a href="{{ url_for('dashboard')}}" >Back</a></li>
         </ul>
     </nav>
@@ -27,7 +27,6 @@
                     <th>Gender</th>
                     <th>Type</th>
                     <th>Identification_id</th>
-                    <th>Student/Volunteer</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -41,15 +40,6 @@
                     <td>{{item[4]}}</td>
                     <td>{{item[6]}}</td>
                     <td>{{item[5]}}</td>
-                    <td>
-                        {% if item[7] == 0 and item[8] == 0%}
-                        -
-                        {% elif item[7] != 0 %}
-                            Student
-                        {%  else %}                            
-                            Member
-                        {% endif%}
-                    </td>
                     <td>
                         <a href="{{url_for('update_instructor_link', s_id=item[0])}}">Update</a>
                     </td>

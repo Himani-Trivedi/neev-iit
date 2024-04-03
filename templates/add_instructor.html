@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Instructor</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles.css')}}">
 </head>
 <body>
     <div class="container1">
         <h2>Add Instructor</h2>
-        <form action="process_member.php" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="id">ID:</label>
-                <input type="text" id="id" name="id" required>
-            </div>
+        <form action="{{ url_for('insert_instructor')}}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -27,6 +23,11 @@
                 <input type="text" id="phone" name="phone" required>
             </div>
             <div class="form-group">
+                <label for="Identification_id">Identification_id</label>
+                <input type="text" id="Identification_id" name="Identification_id" required>
+            </div>
+            
+            <div class="form-group">
                 <label for="gender">Gender:</label>
                 <select id="gender" name="gender" required>
                     <option value="male">Male</option>
@@ -37,7 +38,10 @@
             
             <div class="form-group">
                 <label for="Type">Type:</label>
-                <input type="text" id="Type" name="Type" required>
+                <select id="Type" name="Type" required>
+                    <option value="Full">Full</option>
+                    <option value="Part">Part time</option>
+                </select>
             </div>
             <button type="submit">Submit</button>
         </form>

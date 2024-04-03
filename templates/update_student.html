@@ -33,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label for="phone">Phone no :</label>
-                <input type="text" id="phone" name="phone" required value="{{d[8]}}">
+                <input type="text" id="phone" maxlength="10" minlength="10" name="phone" required value="{{d[6]}}">
             </div>
             <div class="form-group1">
                 <label for="gender">Gender:</label>
@@ -53,23 +53,60 @@
                     {% endif %}
                 </select>
                 {% if error != 2 %}
-                {% set new_path= path + "/" + d[6] %}
+                {% set new_path= path + "/" + d[5] %}
                 {% endif %}
 
                 <label for="photo">Photo:</label>
                 <input type="file" id="photo" name="photo" accept="image/*">
                 {% if error != 2 %}
-                <a href="../{{path}}/{{d[6]}}">Uploaded</a>
+                <a href="../{{path}}/{{d[5]}}">Uploaded</a>
                 {% endif %}
 
             </div>
 
             <div class="form-group">
-                <label for="designation">Designation:</label>
-                <input type="text" id="designation" name="designation" required value="{{d[5]}}">
+                <label for="Family background">Family_background:</label>
+                <select id="fam_background" name="fam_background" required>
+                    {% if d[7] == 'Upper class'%}
+                    <option value="Upper class" selected>Upper class</option>
+                    <option value="Lower class">Lower class</option>
+                    <option value="Middle class">Middle class</option>
+                    <option value="Upper middle class">Upper middle class</option>
+                    <option value="Lower middle class">Lower middle class</option>
+                    {% elif d[7] == 'Lower class' %}
+                    <option value="Lower class" selected>Lower class</option>
+                    <option value="Upper class">Upper class</option>
+                    <option value="Middle class">Middle class</option>
+                    <option value="Upper Middle class">Upper middle class</option>
+                    <option value="Lower Middle class">Lower middle class</option>
+                    {% elif d[7] == 'Middle class' %}
+                    <option value="Middle class" selected>Middle class</option>
+                    <option value="Upper class">Upper class</option>
+                    <option value="Lower class">Lower class</option>
+                    <option value="Upper Middle class">Upper middle class</option>
+                    <option value="Lower Middle class">Lower middle class</option>
+                    {% elif d[7] == 'Upper middle class' %}
+                    <option value="Upper Middle class" selected>Upper middle class</option>
+                    <option value="Upper class">Upper class</option>
+                    <option value="Lower class">Lower class</option>
+                    <option value="Middle class">Middle class</option>
+                    <option value="Lower Middle class">Lower middle class</option>
+                    {% elif d[7] == 'Lower middle class' %}
+                    <option value="Lower Middle class" selected>Lower middle class</option>
+                    <option value="Upper class">Upper class</option>
+                    <option value="Lower class">Lower class</option>
+                    <option value="Middle class">Middle class</option>
+                    <option value="Upper Middle class">Upper middle class</option>
+                    {% endif %}
+                </select>
             </div>
 
-            <input type="hidden" id="" name="m_id" required value="{{d[0]}}">
+            <div class="form-group">
+                <label for="designation">Address:</label>
+                <input type="text" id="designation" name="designation" required value="{{d[8]}}">
+            </div>
+
+            <input type="hidden" id="" name="s_id" required value="{{d[0]}}">
 
             <button type="submit">Submit</button>
         </form>

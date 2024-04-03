@@ -36,6 +36,7 @@
             <tbody>
                 {% for item in data %}
                 <tr>
+                    {% if item[0]  != 12 %}
                     <td>{{item[1]}}</td>
                     <td>{{item[2]}}</td>
                     <td>{{item[6]}}</td>
@@ -52,6 +53,7 @@
                     <td>
                         <a href="{{url_for('delete_student', s_id=item[0])}}">Delete</a>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
               
