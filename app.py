@@ -122,7 +122,7 @@ def display_profile():
     else :
         return redirect(url_for('home'))
 
-    return render_template('profile.html',data=data,type=session['member_type'])
+    return render_template('profile.html',data=data,path=app.config['UPLOAD_FOLDER'],type=session['member_type'])
 
 
 @app.route('/volunteers')
