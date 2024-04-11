@@ -11,7 +11,7 @@
   <div class="login-container">
     <h2>Login</h2>
     {% if error == 1 %}
-        <p>Invalid Username & password</p>  
+    <p>Invalid Username & password</p>
     {% endif %}
     <form action="{{ url_for('login_auth') }}" method="post">
       <div class="input-group">
@@ -24,12 +24,22 @@
         <input type="password" id="password" name="password" required>
       </div>
       <button class="login-btn">Login</button>
+      <br><br>
     </form>
+
+    <div class="input-group">
+      <a href="{{ url_for('googleLogin') }}">
+        <button class="login-btn">
+          <img id="google" src="static\google.png" alt="Google">
+        </button>
+      </a>
+    </div>
+
   </div>
 </div>
 
 <main>
   <div class="translucent-bg1"></div>
-  </main>
+</main>
 
 {% endblock %}
