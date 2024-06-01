@@ -29,5 +29,5 @@ It is a web application designed to simplify the system, addressing the unstruct
     5. Run the Application: `python app.py`
 
 ## Reports
-    1. View the ER diagram :[Link](https://drawsql.app/teams/bro-code/diagrams/neev-management)
-    2. Screenshots: [Link](https://github.com/Himani-Trivedi/neev-iit/blob/main/Report_Neev.pdf)
+    1. View the ER diagram :https://drawsql.app/teams/bro-code/diagrams/neev-management
+    2. Screenshots: https://github.com/Himani-Trivedi/neev-iit/blob/main/Report_Neev.pdf
