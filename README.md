@@ -30,4 +30,4 @@ It is a web application designed to simplify the system, addressing the unstruct
 
 ## Reports
     1. View the ER diagram :https://drawsql.app/teams/bro-code/diagrams/neev-management
-    2. Screenshots: [!https://github.com/Himani-Trivedi/neev-iit/blob/main/Report_Neev.pdf]
+    2. Screenshots:https://github.com/Himani-Trivedi/neev-iit/blob/main/Report_Neev.pdf
